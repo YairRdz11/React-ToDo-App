@@ -27,6 +27,19 @@ function App() {
     searchedTodos = todos.filter(todo => todo.text.toLowerCase().includes(searchValue.toLowerCase()));
   }
 
+  const completeTodo = (text) => {
+    const todoIndex = todos.findIndex(todo=>todo.text === text);
+    const newTodos = [...todos];
+
+    newTodos[todoIndex].completed = true;
+    setTodos(newTodos);
+  }
+
+  const deleteTodo = (text) => {
+    const newTodos = todos.filter(todo => todo.text !== text);
+    setTodos(newTodos);
+  }
+
   return (
     <React.Fragment>
       <TodoCounter 
@@ -42,7 +55,9 @@ function App() {
           <TodoItem 
             key={todo.text} 
             text={todo.text}
-            completed={todo.completed}  
+            completed={todo.completed}
+            onComplete={()=>completeTodo(todo.text)}
+            onDelete={()=>deleteTodo(todo.text)}
           />
         ))}
       </TodoList>
