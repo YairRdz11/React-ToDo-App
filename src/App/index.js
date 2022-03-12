@@ -2,33 +2,54 @@ import React from "react";
 import { AppUI } from "./AppUI";
 
 function useLocalStorage(itemName, initialValue){
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [item, setItem] = React.useState(initialValue);
 
-  const localStorageItem = localStorage.getItem(itemName);
-  let parsedItem;
+  React.useEffect(() => {
+    setTimeout(() => {
+      try{
+        const localStorageItem = localStorage.getItem(itemName);
+      let parsedItem;
 
-  if(!localStorageItem) {
-    localStorage.setItem(itemName, JSON.stringify(initialValue));
-    parsedItem = initialValue;
-  }
-  else{
-    parsedItem = JSON.parse(localStorageItem);
-  }
+      if(!localStorageItem) {
+        localStorage.setItem(itemName, JSON.stringify(initialValue));
+        parsedItem = initialValue;
+      }
+      else{
+        parsedItem = JSON.parse(localStorageItem);
+      }
 
-  const [item, setItem] = React.useState(parsedItem);
+      setItem(parsedItem);
+      setLoading(false);
+      }
+      catch(error){
+        setError(error);
+      }
+    }, 1000);
+  });
 
   const saveItem = (newItem) => {
-    const stringifyedItem = JSON.stringify(newItem);
+    try{
+      const stringifyedItem = JSON.stringify(newItem);
     localStorage.setItem(itemName, stringifyedItem);
     setItem(newItem);
+    }
+    catch(error){
+      setError(error);
+    }
   }
 
-  return [
-    item, saveItem
-  ];
+  return {
+    item, 
+    saveItem,
+    loading,
+    error
+  };
 }
 
 function App() {
-  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
+  const {item: todos, saveItem: saveTodos, loading, error} = useLocalStorage('TODOS_V1', []);
 
   const [searchValue, setSearchValue] = React.useState('');
   
@@ -56,8 +77,16 @@ function App() {
     saveTodos(newTodos);
   }
 
+  console.log('Render before use effect');
+  React.useEffect(() => {
+    console.log('use effect');
+  }, [totalTodos]);
+  console.log('Render after use effect');
+
   return (
     <AppUI 
+      loading= {loading}
+      error = {error}
       totalTodos= {totalTodos}
       completedTodos= {completedTodos}
       searchValue= {searchValue}
