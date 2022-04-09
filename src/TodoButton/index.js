@@ -3,7 +3,7 @@ import './TodoButton.css';
 
 function TodoButton(props){
     const onClickButton = () => {
-        props.setOpenModal(true);
+        props.setOpenModal(prevState => !prevState);
     }
     return(
         <button 

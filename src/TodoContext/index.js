@@ -39,6 +39,15 @@ function TodoProvider(props) {
     saveTodos(newTodos);
   };
 
+  const addTodo = (text) => {
+    const newTodos = [...todos];
+    newTodos.push({
+      completed: false,
+      text: text
+    });
+    saveTodos(newTodos);
+  };
+
   React.useEffect(() => {
   }, [totalTodos]);
 
@@ -53,6 +62,7 @@ function TodoProvider(props) {
         searchedTodos,
         completeTodo,
         deleteTodo,
+        addTodo,
         openModal,
         setOpenModal
     }}>
